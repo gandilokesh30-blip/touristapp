@@ -2,13 +2,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserShield, FaUserTie } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next'; // Import the hook
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
-  const { t } = useTranslation(); // Initialize the hook
+  const { t } = useTranslation();
 
   return (
-    <div className="home-container">
+    // Use the simpler, centered layout container
+    <div className="home-container"> 
       <h1>{t('homeTitle')}</h1>
       <p>{t('homeSubtitle')}</p>
       <div className="role-selection">

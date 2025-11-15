@@ -1,27 +1,39 @@
+// src/components/dashboard/IncidentList.jsx
 import React from 'react';
-import { FaExclamationTriangle, FaBan, FaHourglassHalf } from 'react-icons/fa';
+import { FaExclamationTriangle, FaBan, FaHourglassHalf, FaHeartbeat } from 'react-icons/fa';
+import IncidentActions from './IncidentActions'; // Import the new component
 
-const IncidentList = ({ incidents }) => {
+const IncidentList = ({ incidents, onAcknowledge, onResolve }) => { // Add new props
     const getIcon = (type) => {
-        switch (type) {
-            case 'Panic Button': return <FaExclamationTriangle color="red" />;
-            case 'Geo-fence Breach': return <FaBan color="orange" />;
-            case 'Prolonged Inactivity': return <FaHourglassHalf color="blue" />;
-            default: return null;
-        }
+        if (type.includes('SOS')) return <FaHeartbeat color="red" />;
+        if (type.includes('Panic')) return <FaExclamationTriangle color="red" />;
+        if (type.includes('Geo-fence')) return <FaBan color="orange" />;
+        if (type.includes('Inactivity')) return <FaHourglassHalf color="blue" />;
+        return null;
     }
+
+    const getPriorityClass = (priority) => {
+        if (priority === 'Critical') return 'priority-critical';
+        if (priority === 'High') return 'priority-high';
+        return 'priority-medium';
+    };
+
   return (
     <div className="list-card">
       <h3>Recent Incidents ({incidents.length})</h3>
       <ul className="list-items">
         {incidents.map(incident => (
-          <li key={incident.id} className="list-item">
+          <li key={incident.id} className={`list-item incident-item ${getPriorityClass(incident.priority)}`}>
             <div className="incident-icon">{getIcon(incident.type)}</div>
-            <div>
+            <div className="incident-details">
               <strong>{incident.type}</strong>
-              <p>Tourist ID: {incident.touristId} | {incident.timestamp}</p>
+              <p>ID: {incident.touristId} | {incident.timestamp}</p>
             </div>
-            <span className="incident-status">{incident.status}</span>
+            <IncidentActions 
+              incident={incident}
+              onAcknowledge={onAcknowledge}
+              onResolve={onResolve}
+            />
           </li>
         ))}
       </ul>

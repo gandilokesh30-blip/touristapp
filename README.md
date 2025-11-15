@@ -1,6 +1,14 @@
-# React + Vite
+# Smart Tourist Safety App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive safety and travel companion application for tourists with real-time incident tracking, AI-powered travel planning, and emergency support features.
+
+**GitHub Repository:** [https://github.com/arun9-tech/tourist-app](https://github.com/arun9-tech/tourist-app)
+
+---
+
+## Built with React + Vite
+
+This project provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
 

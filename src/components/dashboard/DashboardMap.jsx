@@ -1,8 +1,9 @@
+// src/components/dashboard/DashboardMap.jsx
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Circle, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 
-// Fix for default marker icon issue with Webpack
+// This fix for the default icon is still needed for other map elements.
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -10,17 +11,36 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// Function to create custom SVG map pin icons
+const getTouristIcon = (status) => {
+  // === THE FIX IS HERE: Use exact color codes as requested ===
+  let pinColor;
+  switch (status) {
+    case 'Alert':
+      pinColor = '#ffc107'; // Orange (from your CSS --warning-color)
+      break;
+    case 'Missing':
+      pinColor = '#dc3545'; // Red (from your CSS --danger-color)
+      break;
+    case 'Safe':
+    default:
+      pinColor = '#28a745'; // Green (from your CSS --success-color)
+  }
+  // ==========================================================
 
-const getStatusIcon = (status) => {
-    const color = status === 'Safe' ? 'green' : status === 'Alert' ? 'orange' : 'red';
-    return new L.Icon({
-        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
+  const iconSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36">
+      <path fill="${pinColor}" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13C19 5.13 15.87 2 12 2z"/>
+      <circle cx="12" cy="9" r="2.5" fill="white"/>
+    </svg>
+  `;
+
+  return new L.Icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(iconSvg)}`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -36]
+  });
 };
 
 const MapFocus = ({ position }) => {
@@ -32,7 +52,7 @@ const MapFocus = ({ position }) => {
 }
 
 const DashboardMap = ({ tourists, zones, selectedTourist }) => {
-  const center = [26.0, 91.9]; // Center of Northeast India approx
+  const center = [26.0, 91.9];
 
   return (
     <div className="dashboard-map-container">
@@ -45,10 +65,10 @@ const DashboardMap = ({ tourists, zones, selectedTourist }) => {
           <Marker 
             key={t.id} 
             position={[t.currentLocation.lat, t.currentLocation.lng]}
-            icon={getStatusIcon(t.status)}
+            icon={getTouristIcon(t.status)}
           >
             <Popup>
-              <b>{t.name}</b><br/>Status: {t.status}<br/>Score: {t.safetyScore}
+              <b>{t.name}</b><br/>Status: {t.status}<br/>Score: {t.score}
             </Popup>
           </Marker>
         ))}
